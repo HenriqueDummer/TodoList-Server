@@ -6,12 +6,10 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createCategoryDto: CreateCategoryDto) {
-    const { userId, ...categoryData } = createCategoryDto;
-
+  create(createCategoryDto: CreateCategoryDto, userId: string) {
     return this.prisma.category.create({
       data: {
-        ...categoryData,
+        ...createCategoryDto,
         user: {
           connect: { id: userId },
         },

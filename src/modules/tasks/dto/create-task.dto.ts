@@ -14,10 +14,6 @@ export class CreateTaskDto {
   completed?: boolean;
 
   @IsString()
-  @IsNotEmpty()
-  userId!: string;
-
-  @IsString()
   @IsOptional()
   categoryId?: string;
 }

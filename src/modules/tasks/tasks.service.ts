@@ -6,8 +6,8 @@ import { CreateTaskDto } from './dto/create-task.dto';
 export class TasksService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createTaskDto: CreateTaskDto) {
-    const { categoryId, userId, ...taskData } = createTaskDto;
+  create(createTaskDto: CreateTaskDto, userId: string) {
+    const { categoryId, ...taskData } = createTaskDto;
 
     return this.prisma.task.create({
       data: {

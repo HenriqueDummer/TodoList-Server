@@ -2,32 +2,31 @@ import {
   IsBoolean,
   IsDateString,
   IsIn,
-  IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { TASK_PRIORITIES, type TaskPriorityDto } from './create-task.dto';
 
-export const TASK_PRIORITIES = ['low', 'medium', 'high'] as const;
-export type TaskPriorityDto = (typeof TASK_PRIORITIES)[number];
-
-export class CreateTaskDto {
+export class UpdateTaskDto {
   @IsString()
-  @IsNotEmpty()
-  title!: string;
+  @IsOptional()
+  title?: string;
 
   @IsString()
   @IsOptional()
-  description?: string;
+  description?: string | null;
 
   @IsBoolean()
   @IsOptional()
   completed?: boolean;
 
   @IsIn(TASK_PRIORITIES)
-  priority!: TaskPriorityDto;
+  @IsOptional()
+  priority?: TaskPriorityDto;
 
   @IsDateString()
-  dueDate!: string;
+  @IsOptional()
+  dueDate?: string;
 
   @IsString()
   @IsOptional()

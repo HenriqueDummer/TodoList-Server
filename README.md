@@ -1,98 +1,279 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# TodoList Server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API backend para um aplicativo de lista de tarefas. O projeto foi criado com
+NestJS, usa Prisma como ORM, MySQL/MariaDB como banco de dados e Firebase
+Authentication para autenticar os usuários.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Cada usuário autenticado pode cadastrar suas próprias categorias e tarefas. As
+rotas protegidas sempre usam o usuário identificado pelo token Firebase enviado
+no header `Authorization`.
 
-## Description
+## Tecnologias
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- NestJS
+- TypeScript
+- Prisma
+- MySQL/MariaDB
+- Firebase Admin SDK
+- Jest
 
-## Project setup
+## Requisitos
 
-```bash
-$ npm install
-```
+- Node.js
+- npm
+- Banco MySQL ou MariaDB
+- Projeto Firebase com uma conta de serviço configurada
 
-## Compile and run the project
+## Configuração
+
+Instale as dependências:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+Crie um arquivo `.env` na raiz do projeto com as variáveis necessárias:
+
+```env
+DATABASE_URL="mysql://usuario:senha@localhost:3306/nome_do_banco"
+FIREBASE_PROJECT_ID="seu-project-id"
+FIREBASE_CLIENT_EMAIL="firebase-adminsdk-...@seu-project-id.iam.gserviceaccount.com"
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+PORT=3000
+```
+
+Execute as migrações do Prisma:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx prisma migrate dev
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Inicie a aplicação em modo desenvolvimento:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Por padrão, a API fica disponível em:
 
-## Resources
+```text
+http://localhost:3000
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+## Autenticação
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+As rotas protegidas esperam um token de ID do Firebase no header:
 
-## Support
+```http
+Authorization: Bearer <firebase_id_token>
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Antes de criar tarefas ou categorias, o usuário precisa existir na base local.
+Para isso, chame `POST /users` com um token Firebase válido.
 
-## Stay in touch
+## Modelo de Dados
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### User
 
-## License
+Representa o usuário local vinculado ao Firebase.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Campos principais:
+
+- `id`
+- `firebaseId`
+- `email`
+- `name`
+- `createdAt`
+- `updatedAt`
+
+### Category
+
+Representa uma categoria de tarefas do usuário.
+
+Campos principais:
+
+- `id`
+- `name`
+- `icon`
+- `color`
+- `userId`
+- `createdAt`
+- `updatedAt`
+
+### Task
+
+Representa uma tarefa do usuário.
+
+Campos principais:
+
+- `id`
+- `title`
+- `description`
+- `completed`
+- `priority`: `low`, `medium` ou `high`
+- `dueDate`
+- `userId`
+- `categoryId`
+- `createdAt`
+- `updatedAt`
+
+## Endpoints
+
+### Health
+
+| Método | Rota | Autenticação | Descrição |
+| --- | --- | --- | --- |
+| `GET` | `/health` | Não | Verifica se a API está online. |
+
+Resposta:
+
+```json
+{
+  "status": "ok",
+  "timestamp": "2026-06-26T20:00:00.000Z"
+}
+```
+
+### Usuários
+
+| Método | Rota | Autenticação | Descrição |
+| --- | --- | --- | --- |
+| `POST` | `/users` | Sim | Cria o usuário local a partir do token Firebase. Se já existir, retorna o usuário existente. |
+| `GET` | `/users/me` | Sim | Retorna os dados do usuário autenticado. |
+
+Body de `POST /users`:
+
+```json
+{
+  "name": "Maria"
+}
+```
+
+### Categorias
+
+Todas as rotas de categorias exigem autenticação.
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `POST` | `/categories` | Cria uma categoria para o usuário autenticado. |
+| `GET` | `/categories` | Lista as categorias do usuário autenticado. |
+| `PATCH` | `/categories/:id` | Atualiza uma categoria do usuário autenticado. |
+| `DELETE` | `/categories/:id` | Remove uma categoria do usuário autenticado. |
+
+Body de `POST /categories`:
+
+```json
+{
+  "name": "Trabalho",
+  "icon": "briefcase",
+  "color": "#0ea5e9"
+}
+```
+
+Body de `PATCH /categories/:id`:
+
+```json
+{
+  "name": "Estudos",
+  "icon": "book",
+  "color": "#22c55e"
+}
+```
+
+Todos os campos do `PATCH` são opcionais.
+
+### Tarefas
+
+Todas as rotas de tarefas exigem autenticação.
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `POST` | `/tasks` | Cria uma tarefa para o usuário autenticado. |
+| `GET` | `/tasks` | Lista as tarefas do usuário autenticado. |
+| `PATCH` | `/tasks/:id` | Atualiza uma tarefa do usuário autenticado. |
+| `DELETE` | `/tasks/:id` | Remove uma tarefa do usuário autenticado. |
+
+Body de `POST /tasks`:
+
+```json
+{
+  "title": "Finalizar relatório",
+  "description": "Enviar a versão final até o fim do dia",
+  "completed": false,
+  "priority": "high",
+  "dueDate": "2026-06-30T18:00:00.000Z",
+  "categoryId": "uuid-da-categoria"
+}
+```
+
+Campos obrigatórios em `POST /tasks`:
+
+- `title`
+- `priority`
+- `dueDate`
+
+Campos opcionais:
+
+- `description`
+- `completed`
+- `categoryId`
+
+Body de `PATCH /tasks/:id`:
+
+```json
+{
+  "title": "Finalizar relatório revisado",
+  "completed": true,
+  "priority": "medium",
+  "dueDate": "2026-07-01T18:00:00.000Z",
+  "categoryId": null
+}
+```
+
+Todos os campos do `PATCH` são opcionais. Para remover a categoria de uma
+tarefa, envie `categoryId` como `null`.
+
+Filtros de `GET /tasks`:
+
+| Query param | Valores | Descrição |
+| --- | --- | --- |
+| `status` | `completed` ou `pending` | Filtra tarefas concluídas ou pendentes. |
+| `categoryId` | UUID da categoria | Filtra tarefas por categoria. |
+
+Exemplos:
+
+```http
+GET /tasks?status=pending
+GET /tasks?categoryId=uuid-da-categoria
+GET /tasks?status=completed&categoryId=uuid-da-categoria
+```
+
+## Validações e Erros
+
+A aplicação usa `ValidationPipe` global com:
+
+- remoção de campos não definidos nos DTOs;
+- transformação automática de query params e body;
+- erro quando campos extras são enviados.
+
+Erros comuns:
+
+- `401 Unauthorized`: token ausente, inválido ou fora do formato `Bearer`.
+- `404 Not Found`: usuário local, tarefa ou categoria não encontrada.
+- `400 Bad Request`: dados inválidos no body ou query params.
+
+
+## Estrutura Principal
+
+```text
+src/
+  common/prisma/       Configuração do Prisma
+  modules/auth/        Autenticação com Firebase
+  modules/users/       Cadastro e consulta do usuário local
+  modules/categories/  CRUD de categorias
+  modules/tasks/       CRUD e filtros de tarefas
+  modules/health/      Health check da API
+prisma/
+  schema.prisma        Schema do banco
+  migrations/          Migrações do Prisma
+```
